@@ -24,5 +24,5 @@ Coming soon on Render …
 ```bash
 git clone https://github.com/<user>/supermarket-management-system.git
 cd supermarket-management-system
-cp .env.example .env    # fill in values
+cp .env.example .env   
 docker compose up --build
