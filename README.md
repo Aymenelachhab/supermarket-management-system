@@ -10,6 +10,7 @@ Coming soon on Render …
 
 ## Screenshots
 <img src="dashboard.png" width="700" alt="dashboard">
+<img src="dashboarduser.png" width="700" alt="dashboard">
 
 ## Tech stack
 | Layer | Tool |
