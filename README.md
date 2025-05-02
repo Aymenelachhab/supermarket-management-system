@@ -9,7 +9,7 @@ Full‑stack Flask + MongoDB app to manage inventory, suppliers, orders, and u
 Coming soon on Render …
 
 ## Screenshots
-<img src="docs/dashboard.png" width="700" alt="dashboard">
+<img src="dashboard.png" width="700" alt="dashboard">
 
 ## Tech stack
 | Layer | Tool |
