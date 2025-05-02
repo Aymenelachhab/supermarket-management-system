@@ -1,0 +1,311 @@
+{% extends "base.html" %}
+
+{% block title %}Orders - Stock Management System{% endblock %}
+
+{% block content %}
+<h1 class="my-4">Product Management</h1>
+<button class="btn btn-success mb-4" data-bs-toggle="modal" data-bs-target="#addProductModal">
+    <i class="fas fa-plus"></i> Add Product
+</button>
+
+<!-- Search Bar -->
+<form method="POST" class="mb-4">
+    <div class="input-group">
+        <select class="form-select" name="search_criteria">
+            <option value="all">All</option>
+            <option value="productName">Product Name</option>
+            <option value="brand">Brand</option>
+            <option value="category">Category</option>
+            <option value="sub_category">Sub-Category</option>
+            <option value="sub_subcategory">Sub-Subcategory</option>
+            <option value="costPrice">Cost Price</option>
+            <option value="marketPrice">Market Price</option>
+            <option value="supplier">Supplier</option>
+            <option value="quantity">Quantity</option>
+            <option value="Consumer Type">Consumer Type</option>
+        </select>
+        <input type="text" name="search" class="form-control" placeholder="Search products...">
+        <button type="submit" class="btn btn-primary">Search</button>
+    </div>
+</form>
+
+<!-- Products Table -->
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Product ID</th>
+            <th>Product Name</th>
+            <th>Brand</th>
+            <th>Category</th>
+            <th>Sub-Category</th>
+            <th>Sub-Subcategory</th>
+            <th>Cost Price</th>
+            <th>Market Price</th>
+            <th>Supplier</th>
+            <th>Quantity</th>
+            <th>Consumer Type</th>
+            <th>Expiry Date</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for product in products %}
+        <tr>
+            <td>{{ product._id }}</td>
+            <td>{{ product.productName }}</td>
+            <td>{{ product.brand }}</td>
+            <td>{{ product.category }}</td>
+            <td>{{ product.sub_category }}</td>
+            <td>{{ product.sub_subcategory }}</td>
+            <td>${{ product.costPrice }}</td>
+            <td>${{ product.marketPrice }}</td>
+            <td>{{ product.supplier }}</td>
+            <td>{{ product.quantity }}</td>
+            <td>{{ product.consumer_type }}</td>
+            <td>{{ product.expiry_Date }}</td>
+            <td>
+                <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editProductModal"
+                        onclick="loadProductForEdit('{{ product._id }}', '{{ product.productName }}', '{{ product.brand }}', '{{ product.category }}', '{{ product.sub_category }}', '{{ product.sub_subcategory }}', '{{ product.costPrice }}', '{{ product.marketPrice }}', '{{ product.supplier }}', '{{ product.quantity }}', '{{ product.consumer_type }}', '{{ product.expiry_Date }}')">
+                    <i class="fas fa-edit"></i> Edit
+                </button>
+                <form method="POST" action="{{ url_for('delete_product', product_id=product._id) }}" onsubmit="return confirm('Are you sure you want to delete this product?');" style="display: inline;">
+                    <button type="submit" class="btn btn-danger btn-sm">
+                        <i class="fas fa-trash"></i> Delete
+                    </button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<!-- Expiring Products Table -->
+<h2 class="my-4">Expiring Products (Within 14 Days)</h2>
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Product ID</th>
+            <th>Product Name</th>
+            <th>Brand</th>
+            <th>Category</th>
+            <th>Sub-Category</th>
+            <th>Sub-Subcategory</th>
+            <th>Cost Price</th>
+            <th>Market Price</th>
+            <th>Supplier</th>
+            <th>Quantity</th>
+            <th>Consumer Type</th>
+            <th>Expiry Date</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for product in expiring_products %}
+        <tr>
+            <td>{{ product._id }}</td>
+            <td>{{ product.productName }}</td>
+            <td>{{ product.brand }}</td>
+            <td>{{ product.category }}</td>
+            <td>{{ product.sub_category }}</td>
+            <td>{{ product.sub_subcategory }}</td>
+            <td>${{ product.costPrice }}</td>
+            <td>${{ product.marketPrice }}</td>
+            <td>{{ product.supplier }}</td>
+            <td>{{ product.quantity }}</td>
+            <td>{{ product.consumer_type }}</td>
+            <td>{{ product.expiry_Date }}</td>
+            <td>
+                <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editProductModal"
+                        onclick="loadProductForEdit('{{ product._id }}', '{{ product.productName }}', '{{ product.brand }}', '{{ product.category }}', '{{ product.sub_category }}', '{{ product.sub_subcategory }}', '{{ product.costPrice }}', '{{ product.marketPrice }}', '{{ product.supplier }}', '{{ product.quantity }}', '{{ product.consumer_type }}', '{{ product.expiry_Date }}')">
+                    <i class="fas fa-edit"></i> Edit
+                </button>
+                <form method="POST" action="{{ url_for('delete_product', product_id=product._id) }}" onsubmit="return confirm('Are you sure you want to delete this product?');" style="display: inline;">
+                    <button type="submit" class="btn btn-danger btn-sm">
+                        <i class="fas fa-trash"></i> Delete
+                    </button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<!-- Add Product Modal -->
+<div class="modal fade" id="addProductModal" tabindex="-1" aria-labelledby="addProductModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addProductModalLabel">Add Product</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form method="POST" action="{{ url_for('add_product') }}">
+                    <div class="mb-3">
+                        <label for="productID" class="form-label">Product ID</label>
+                        <input type="text" class="form-control" id="productID" name="productID" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="productName" class="form-label">Product Name</label>
+                        <input type="text" class="form-control" id="productName" name="productName" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="brand" class="form-label">Brand</label>
+                        <input type="text" class="form-control" id="brand" name="brand" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="category" class="form-label">Category</label>
+                        <input type="text" class="form-control" id="category" name="category" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="sub_category" class="form-label">Sub-Category</label>
+                        <input type="text" class="form-control" id="sub_category" name="sub_category" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="sub_subcategory" class="form-label">Sub-Subcategory</label>
+                        <input type="text" class="form-control" id="sub_subcategory" name="sub_subcategory" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="costPrice" class="form-label">Cost Price</label>
+                        <input type="number" step="0.01" class="form-control" id="costPrice" name="costPrice" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="marketPrice" class="form-label">Market Price</label>
+                        <input type="number" step="0.01" class="form-control" id="marketPrice" name="marketPrice" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="supplier" class="form-label">Supplier</label>
+                        <input type="text" class="form-control" id="supplier" name="supplier" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="quantity" class="form-label">Quantity</label>
+                        <input type="number" class="form-control" id="quantity" name="quantity" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="consumer_type" class="form-label">Consumer Type</label>
+                        <input type="text" class="form-control" id="consumer_type" name="consumer_type" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="expiry_Date" class="form-label">Expiry Date</label>
+                        <input type="date" class="form-control" id="expiry_Date" name="expiry_Date" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Add Product</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Product Modal -->
+<div class="modal fade" id="editProductModal" tabindex="-1" aria-labelledby="editProductModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editProductModalLabel">Edit Product</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editProductForm">
+                    <div class="mb-3">
+                        <label for="editProductName" class="form-label">Product Name</label>
+                        <input type="text" class="form-control" id="editProductName" name="productName" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editBrand" class="form-label">Brand</label>
+                        <input type="text" class="form-control" id="editBrand" name="brand" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editCategory" class="form-label">Category</label>
+                        <input type="text" class="form-control" id="editCategory" name="category" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editSubCategory" class="form-label">Sub-Category</label>
+                        <input type="text" class="form-control" id="editSubCategory" name="sub_category" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editSubSubcategory" class="form-label">Sub-Subcategory</label>
+                        <input type="text" class="form-control" id="editSubSubcategory" name="sub_subcategory" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editCostPrice" class="form-label">Cost Price</label>
+                        <input type="number" step="0.01" class="form-control" id="editCostPrice" name="costPrice" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editMarketPrice" class="form-label">Market Price</label>
+                        <input type="number" step="0.01" class="form-control" id="editMarketPrice" name="marketPrice" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editSupplier" class="form-label">Supplier</label>
+                        <input type="text" class="form-control" id="editSupplier" name="supplier" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editQuantity" class="form-label">Quantity</label>
+                        <input type="number" class="form-control" id="editQuantity" name="quantity" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editConsumerType" class="form-label">Consumer Type</label>
+                        <input type="text" class="form-control" id="editConsumerType" name="consumer_type" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editExpiryDate" class="form-label">Expiry Date</label>
+                        <input type="date" class="form-control" id="editExpiryDate" name="expiry_Date" required>
+                    </div>
+                    <input type="hidden" id="editProductId" name="product_id">
+                    <button type="submit" class="btn btn-primary">Update</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Function to load product data into the edit modal
+    function loadProductForEdit(productId, productName, brand, category, subCategory, subSubcategory, costPrice, marketPrice, supplier, quantity, consumerType, expiryDate) {
+        document.getElementById('editProductId').value = productId;
+        document.getElementById('editProductName').value = productName;
+        document.getElementById('editBrand').value = brand;
+        document.getElementById('editCategory').value = category;
+        document.getElementById('editSubCategory').value = subCategory;
+        document.getElementById('editSubSubcategory').value = subSubcategory;
+        document.getElementById('editCostPrice').value = costPrice;
+        document.getElementById('editMarketPrice').value = marketPrice;
+        document.getElementById('editSupplier').value = supplier;
+        document.getElementById('editQuantity').value = quantity;
+        document.getElementById('editConsumerType').value = consumerType;
+        document.getElementById('editExpiryDate').value = expiryDate;
+    }
+
+    // Handle form submission for editing a product
+    document.getElementById('editProductForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        const productId = document.getElementById('editProductId').value;
+        const productData = {
+            productName: document.getElementById('editProductName').value,
+            brand: document.getElementById('editBrand').value,
+            category: document.getElementById('editCategory').value,
+            sub_category: document.getElementById('editSubCategory').value,
+            sub_subcategory: document.getElementById('editSubSubcategory').value,
+            costPrice: parseFloat(document.getElementById('editCostPrice').value),
+            marketPrice: parseFloat(document.getElementById('editMarketPrice').value),
+            supplier: document.getElementById('editSupplier').value,
+            quantity: parseInt(document.getElementById('editQuantity').value),
+            consumer_type: document.getElementById('editConsumerType').value,
+            expiry_Date: document.getElementById('editExpiryDate').value
+        };
+
+        fetch(`/update_product/${productId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(productData),
+        })
+        .then(response => response.json())
+        .then(data => {
+            alert(data.message);
+            window.location.reload(); // Refresh the page to reflect changes
+        })
+        .catch(error => console.error('Error:', error));
+    });
+</script>
+{% endblock %}

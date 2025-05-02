@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Users - Stock Management System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* Custom styles for light theme */
+        body[data-bs-theme="light"] {
+            background-color: #f8f9fa;
+            color: #212529;
+        }
+        body[data-bs-theme="light"] .navbar {
+            background-color: #ffffff !important;
+            border-bottom: 1px solid #dee2e6;
+        }
+        body[data-bs-theme="light"] .navbar .nav-link,
+        body[data-bs-theme="light"] .navbar .navbar-brand {
+            color: #212529 !important;
+        }
+        body[data-bs-theme="light"] .table {
+            background-color: #ffffff;
+            color: #212529;
+        }
+        body[data-bs-theme="light"] .table-dark {
+            background-color: #ffffff;
+            color: #212529;
+        }
+        body[data-bs-theme="light"] .modal-content {
+            background-color: #ffffff;
+            color: #212529;
+        }
+        body[data-bs-theme="light"] .btn-light {
+            background-color: #f8f9fa;
+            color: #212529;
+        }
+    </style>
+</head>
+<body data-bs-theme="dark">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Stock Management</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('admin_dashboard') }}">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="{{ url_for('users') }}">Users</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('channel_log') }}">Activity Log</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('logout') }}">Logout</a>
+                    </li>
+                </ul>
+                <!-- Theme Toggle Button -->
+                <button class="btn btn-light ms-auto" id="themeToggle">
+                    <i class="fas fa-sun"></i> Light Mode
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-5 pt-4">
+        <h1 class="my-4 ">Welcome, {{ username }}!</h1>
+        <p class="lead ">You are now logged in to the Stock Management System.</p>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Theme Toggle Functionality
+        const themeToggle = document.getElementById('themeToggle');
+        const body = document.body;
+
+        themeToggle.addEventListener('click', () => {
+            if (body.getAttribute('data-bs-theme') === 'dark') {
+                body.setAttribute('data-bs-theme', 'light');
+                themeToggle.innerHTML = '<i class="fas fa-moon"></i> Dark Mode';
+                themeToggle.classList.remove('btn-light');
+                themeToggle.classList.add('btn-dark');
+            } else {
+                body.setAttribute('data-bs-theme', 'dark');
+                themeToggle.innerHTML = '<i class="fas fa-sun"></i> Light Mode';
+                themeToggle.classList.remove('btn-dark');
+                themeToggle.classList.add('btn-light');
+            }
+        });
+
+    </script>
+</body>
+</html>

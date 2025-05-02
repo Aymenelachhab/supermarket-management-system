@@ -1,0 +1,300 @@
+{% extends "base.html" %}
+
+{% block title %}Orders - Stock Management System{% endblock %}
+
+{% block content %}
+<h1 class="my-4">Delivery Management</h1>
+
+<!-- Add Delivery Button -->
+<button class="btn btn-success mb-4" data-bs-toggle="modal" data-bs-target="#addDeliveryModal">
+    <i class="fas fa-plus"></i> Add Delivery
+</button>
+
+<!-- Search Bar -->
+<form method="POST" class="mb-4">
+    <div class="input-group">
+        <select class="form-select" name="search_criteria">
+            <option value="all">All</option>
+            <option value="D_id">Delivery ID</option>
+            <option value="C_id">Customer ID</option>
+            <option value="delivery_date">Delivery Date</option>
+            <option value="delivery_address">Delivery Address</option>
+            <option value="total_price">Total Price</option>
+            <option value="Status">Status</option>
+        </select>
+        <input type="text" name="search" class="form-control" placeholder="Search deliveries...">
+        <button type="submit" class="btn btn-primary">Search</button>
+    </div>
+</form>
+
+<!-- Deliveries Table -->
+<h2 class="my-4">All Deliveries</h2>
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Delivery ID</th>
+            <th>Customer ID</th>
+            <th>Delivery Date</th>
+            <th>Delivery Address</th>
+            <th>Total Price</th>
+            <th>Status</th>
+            <th>List of Products</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for delivery in deliveries %}
+        <tr>
+            <td>{{ delivery.D_id }}</td>
+            <td>{{ delivery.C_id }}</td>
+            <td>{{ delivery.delivery_date }}</td>
+            <td>{{ delivery.delivery_address }}</td>
+            <td>${{ delivery.total_price }}</td>
+            <td>{{ delivery.Status }}</td>
+            <td>
+                <ul>
+                    {% for product in delivery.list_of_products %}
+                    <li>{{ product }}</li>
+                    {% endfor %}
+                </ul>
+            </td>
+            <td>
+                <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editDeliveryModal"
+                        onclick="loadDeliveryForEdit('{{ delivery._id }}', '{{ delivery.D_id }}', '{{ delivery.C_id }}', '{{ delivery.delivery_date }}', '{{ delivery.delivery_address }}', '{{ delivery.total_price }}', '{{ delivery.Status }}', '{{ delivery.list_of_products | tojson | safe }}')">
+                    <i class="fas fa-edit"></i> Edit
+                </button>
+                <form method="POST" action="{{ url_for('delete_delivery', delivery_id=delivery._id) }}" onsubmit="return confirm('Are you sure you want to delete this delivery?');" style="display: inline;">
+                    <button type="submit" class="btn btn-danger btn-sm">
+                        <i class="fas fa-trash"></i> Delete
+                    </button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<!-- Pending Deliveries Table -->
+<h2 class="my-4">Pending Deliveries</h2>
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Delivery ID</th>
+            <th>Customer ID</th>
+            <th>Delivery Date</th>
+            <th>Delivery Address</th>
+            <th>Total Price</th>
+            <th>List of Products</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for delivery in pending_deliveries %}
+        <tr>
+            <td>{{ delivery.D_id }}</td>
+            <td>{{ delivery.C_id }}</td>
+            <td>{{ delivery.delivery_date }}</td>
+            <td>{{ delivery.delivery_address }}</td>
+            <td>${{ delivery.total_price }}</td>
+            <td>
+                <ul>
+                    {% for product in delivery.list_of_products %}
+                    <li>{{ product }}</li>
+                    {% endfor %}
+                </ul>
+            </td>
+            <td>
+                <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editDeliveryModal"
+                        onclick="loadDeliveryForEdit('{{ delivery._id }}', '{{ delivery.D_id }}', '{{ delivery.C_id }}', '{{ delivery.delivery_date }}', '{{ delivery.delivery_address }}', '{{ delivery.total_price }}', '{{ delivery.Status }}', '{{ delivery.list_of_products | tojson | safe }}')">
+                    <i class="fas fa-edit"></i> Edit
+                </button>
+                <form method="POST" action="{{ url_for('delete_delivery', delivery_id=delivery._id) }}" onsubmit="return confirm('Are you sure you want to delete this delivery?');" style="display: inline;">
+                    <button type="submit" class="btn btn-danger btn-sm">
+                        <i class="fas fa-trash"></i> Delete
+                    </button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<!-- Add Delivery Modal -->
+<div class="modal fade" id="addDeliveryModal" tabindex="-1" aria-labelledby="addDeliveryModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addDeliveryModalLabel">Add Delivery</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form method="POST" action="{{ url_for('add_delivery') }}">
+                    <div class="mb-3">
+                        <label for="D_id" class="form-label">Delivery ID</label>
+                        <input type="text" class="form-control" id="D_id" name="D_id" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="C_id" class="form-label">Customer ID</label>
+                        <input type="text" class="form-control" id="C_id" name="C_id" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="delivery_date" class="form-label">Delivery Date</label>
+                        <input type="date" class="form-control" id="delivery_date" name="delivery_date" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="delivery_address" class="form-label">Delivery Address</label>
+                        <input type="text" class="form-control" id="delivery_address" name="delivery_address" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="total_price" class="form-label">Total Price</label>
+                        <input type="number" step="0.01" class="form-control" id="total_price" name="total_price" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="Status" class="form-label">Status</label>
+                        <select class="form-select" id="Status" name="Status" required>
+                            <option value="Pending">Pending</option>
+                            <option value="Completed">Completed</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="list_of_products" class="form-label">List of Products</label>
+                        <select class="form-select" id="list_of_products" name="list_of_products" multiple required>
+                            {% for product in products %}
+                            <option value="{{ product.productName }}">{{ product.productName }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Add</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Delivery Modal -->
+<div class="modal fade" id="editDeliveryModal" tabindex="-1" aria-labelledby="editDeliveryModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editDeliveryModalLabel">Edit Delivery</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editDeliveryForm">
+                    <!-- Hidden field for delivery ID -->
+                    <input type="hidden" id="editDeliveryId" name="delivery_id">
+
+                    <!-- Delivery ID -->
+                    <div class="mb-3">
+                        <label for="editD_id" class="form-label">Delivery ID</label>
+                        <input type="text" class="form-control" id="editD_id" name="D_id" required>
+                    </div>
+
+                    <!-- Customer ID -->
+                    <div class="mb-3">
+                        <label for="editC_id" class="form-label">Customer ID</label>
+                        <input type="text" class="form-control" id="editC_id" name="C_id" required>
+                    </div>
+
+                    <!-- Delivery Date -->
+                    <div class="mb-3">
+                        <label for="editDeliveryDate" class="form-label">Delivery Date</label>
+                        <input type="date" class="form-control" id="editDeliveryDate" name="delivery_date" required>
+                    </div>
+
+                    <!-- Delivery Address -->
+                    <div class="mb-3">
+                        <label for="editDeliveryAddress" class="form-label">Delivery Address</label>
+                        <input type="text" class="form-control" id="editDeliveryAddress" name="delivery_address" required>
+                    </div>
+
+                    <!-- Total Price -->
+                    <div class="mb-3">
+                        <label for="editTotalPrice" class="form-label">Total Price</label>
+                        <input type="number" step="0.01" class="form-control" id="editTotalPrice" name="total_price" required>
+                    </div>
+
+                    <!-- Status -->
+                    <div class="mb-3">
+                        <label for="editStatus" class="form-label">Status</label>
+                        <select class="form-select" id="editStatus" name="Status" required>
+                            <option value="Pending">Pending</option>
+                            <option value="Completed">Completed</option>
+                        </select>
+                    </div>
+
+                    <!-- List of Products -->
+                    <div class="mb-3">
+                        <label for="editListOfProducts" class="form-label">List of Products</label>
+                        <select class="form-select" id="editListOfProducts" name="list_of_products" multiple required>
+                            {% for product in products %}
+                            <option value="{{ product.productName }}">{{ product.productName }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button type="submit" class="btn btn-primary">Update</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function loadDeliveryForEdit(deliveryId, D_id, C_id, delivery_date, delivery_address, total_price, Status, list_of_products) {
+        // Parse the list_of_products JSON string into an array
+        const products = JSON.parse(list_of_products);
+
+        // Populate the form fields
+        document.getElementById('editDeliveryId').value = deliveryId;
+        document.getElementById('editD_id').value = D_id;
+        document.getElementById('editC_id').value = C_id;
+        document.getElementById('editDeliveryDate').value = delivery_date;
+        document.getElementById('editDeliveryAddress').value = delivery_address;
+        document.getElementById('editTotalPrice').value = total_price;
+        document.getElementById('editStatus').value = Status;
+
+        // Set selected products
+        const productSelect = document.getElementById('editListOfProducts');
+        Array.from(productSelect.options).forEach(option => {
+            option.selected = products.includes(option.value);
+        });
+    }
+
+    // Reset the form when the modal is closed
+    document.getElementById('editDeliveryModal').addEventListener('hidden.bs.modal', function () {
+        document.getElementById('editDeliveryForm').reset();
+    });
+
+    // Handle form submission for updating delivery
+    document.getElementById('editDeliveryForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        const deliveryId = document.getElementById('editDeliveryId').value;
+        const deliveryData = {
+            D_id: document.getElementById('editD_id').value,
+            C_id: document.getElementById('editC_id').value,
+            delivery_date: document.getElementById('editDeliveryDate').value,
+            delivery_address: document.getElementById('editDeliveryAddress').value,
+            total_price: parseFloat(document.getElementById('editTotalPrice').value),
+            Status: document.getElementById('editStatus').value,
+            list_of_products: Array.from(document.getElementById('editListOfProducts').selectedOptions).map(option => option.value)
+        };
+
+        fetch(`/update_delivery/${deliveryId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(deliveryData),
+        })
+        .then(response => response.json())
+        .then(data => {
+            alert(data.message);
+            window.location.reload();
+        })
+        .catch(error => console.error('Error:', error));
+    });
+</script>
+{% endblock %}
