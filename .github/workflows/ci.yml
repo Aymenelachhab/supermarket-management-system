@@ -1,7 +1,11 @@
 name: CI
-on: [push]
+on:
+  push:
+  pull_request:
+
 jobs:
-  noop:
+  sanity:
     runs-on: ubuntu-latest
     steps:
-      - run: echo "✅  Workflow is wired up"
+      - uses: actions/checkout@v4
+      - run: echo "workflow wired up"
