@@ -1,32 +1,21 @@
+MIT License
 
----
+Copyright (c) 2025 Aymenelachhab
 
-## 5 ▸ Commit history hygiene
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
 
-1. **Delete secrets** that might already be in Git history (`git filter‑repo` or GitHub’s “Remove sensitive data” docs).  
-2. **Squash** noisy “initial commit”, “fix typo” into logical units before pushing public.  
-3. Tag first release: `git tag v1.0.0 && git push --tags`.
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
 
----
-
-## 6 ▸ Final manual checks before going public
-
-| Check | Command / Tip |
-|-------|---------------|
-| Linters pass | `ruff --fix .` (or `black`/`flake8`) |
-| App boots without IDE (plain terminal) | `python -m app` or Docker |
-| README links / badges not broken | open in preview |
-| No `.pyc`, DB dumps, `.env`, or `.idea` leaked | `git ls-files` |
-| Mongo queries indexed? | ensure you created index on `product_id`, `username` etc. |
-
----
-
-### Your next step
-
-1. Apply the refactor.
-2. Add the scaffolding files above.
-3. `git init && git remote add origin git@github.com:Aymenelachhab/supermarket-management-system.git`
-4. Push → GitHub Actions should go green.  
-5. Pin the repo on your profile and link it from the portfolio homepage.
-
-Once done, you’ll have a **professional‑grade repository** that anyone can clone, run, and evaluate in minutes—exactly what recruiters (and future you) love to see. 💪
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
